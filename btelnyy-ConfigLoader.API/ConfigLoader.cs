@@ -19,6 +19,74 @@ namespace btelnyy.ConfigLoader.API
             return FilePath;
         }
         /// <summary>
+        /// Get all keys of the current config file.
+        /// </summary>
+        /// <returns>
+        /// A IEnumerable<string> which contains all the keys of the config file. Any keys with the [hidden] tag are not shown.
+        /// </returns>
+        public IEnumerable<string> GetKeys()
+        {
+            List<string> keys = new();
+            foreach(string key in Configs.Keys)
+            {
+                if (Configs[key].DataTags.Contains(Tags.HIDDEN))
+                {
+                    continue;
+                }
+                keys.Add(key);
+            }
+            return keys;
+        }
+        /// <summary>
+        /// Get the count of entires in the config file.
+        /// </summary>
+        /// <returns>
+        /// An int32 amount of configuration entries.
+        /// </returns>
+        public int GetConfigLength()
+        {
+            return Configs.Count;
+        }
+        /// <summary>
+        /// Create and Load a new config file from a dictionary. This  method does not add any Tags to the created configuration file
+        /// </summary>
+        /// <param name="filePath">
+        /// Path of the file you wish to create/write to
+        /// </param>
+        /// <param name="dict">
+        /// Dictianory of string, string for key value pairs.
+        /// </param>
+        public void CreateConfigFile(string filePath, Dictionary<string, string> dict)
+        {
+            List<string> Entries = new();
+            foreach(string key in dict.Keys)
+            {
+                Entries.Add(Utility.LineBuilder(key, dict[key]));
+            }
+            File.WriteAllLines(filePath, Entries);
+            LoadFile(filePath);
+        }
+        /// <summary>
+        /// Create a new config file with pre-existing Config objects in a dictionary. Automatically loads file after creation.
+        /// </summary>
+        /// <param name="filePath">
+        /// File which to create.
+        /// </param>
+        /// <param name="dict">
+        /// Dictionary which will be inputed into the file.
+        /// </param>
+        public void CreateConfigFile(string filePath, Dictionary<string, Config> dict)
+        {
+            LinkedList<string> Entries = new();
+            foreach (string key in dict.Keys)
+            {
+                Entries.AddLast(Utility.TagsLineBuilder(dict[key].DataTags));
+                Entries.AddLast(Utility.LineBuilder(key, dict[key].Data));
+            }
+            File.WriteAllLines(filePath, Entries);
+            LoadFile(filePath);
+        }
+        /// <summary>
         /// Loads a file based on the path from param Path into its own object
         /// </summary>
         /// <param name="Path"></param>
@@ -38,6 +106,8 @@ namespace btelnyy.ConfigLoader.API
                 //exclude comments
                 if (DataEntry.StartsWith('#'))
                 {
+                    //make sure comments still count as a line, so they wont get overwritten
+                    LineCounter++;
                     continue;
                 }
                 if (!DoNotCreateNewEntry)
@@ -91,15 +161,71 @@ namespace btelnyy.ConfigLoader.API
                 LineCounter++;
             }
         }
+        /// <summary>
+        /// Add tags to an entry.
+        /// </summary>
+        /// <param name="key">
+        /// Entry key.
+        /// </param>
+        /// <param name="tags">
+        /// IEnumerable of tags to add to the entry.
+        /// </param>
+        /// <exception cref="ArgumentException">
+        /// Key does not exist in Config.
+        /// </exception>
+        /// <exception cref="SecurityException">
+        /// Tags are locked by the config.
+        /// </exception>
         public void AddTags(string key, IEnumerable<Tags> tags)
         {
             if (!Configs.ContainsKey(key))
             {
                 throw new ArgumentException("Key " + key + " is not found, load it with GetString() before adding tags.");
             }
+            if (Configs[key].DataTags.Contains(Tags.LOCK_TAGS))
+            {
+                throw new SecurityException("Key " + key + "has tags locked! Tags cannot be modified for this key.");
+            }
             List<string> lines = File.ReadAllLines(FilePath).ToList();
             int configLine = Configs[key].OriginLine;
             lines.Insert(configLine - 1, Utility.TagsLineBuilder(tags));
+            File.WriteAllLines(FilePath, lines.ToArray());
+        }
+        /// <summary>
+        /// Remove tags from a entry.
+        /// </summary>
+        /// <param name="key">
+        /// Key of the entry.
+        /// </param>
+        /// <param name="tags">
+        /// IEnumerable of Tags to remove.
+        /// </param>
+        /// <exception cref="ArgumentException">
+        /// Key is not found.
+        /// </exception>
+        /// <exception cref="SecurityException">
+        /// Tags are locked.
+        /// </exception>
+        public void RemoveTags(string key, IEnumerable<Tags> tags)
+        {
+            if (!Configs.ContainsKey(key))
+            {
+                throw new ArgumentException("Key " + key + " is not found, load it with GetString() before adding tags.");
+            }
+            if (Configs[key].DataTags.Contains(Tags.LOCK_TAGS))
+            {
+                throw new SecurityException("Key " + key + "has tags locked! Tags cannot be modified for this key.");
+            }
+            foreach(Tags tag in tags)
+            {
+                if (Configs[key].DataTags.Contains(tag))
+                {
+                    Configs[key].DataTags.Remove(tag);
+                }
+            }
+            List<string> lines = File.ReadAllLines(FilePath).ToList();
+            int configLine = Configs[key].OriginLine;
+            lines.Insert(configLine - 1, Utility.TagsLineBuilder(Configs[key].DataTags));
             File.WriteAllLines(FilePath, lines.ToArray());
         }
         /// <summary>
