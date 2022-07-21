@@ -109,6 +109,7 @@ namespace btelnyy.ConfigLoader.API
             int LineCounter = 0;
             foreach (string DataEntry in Data)
             {
+                Log.WriteDebug("Exact Data Entry contender: " + DataEntry);
                 //exclude comments
                 if (DataEntry.StartsWith('#'))
                 {
@@ -123,29 +124,32 @@ namespace btelnyy.ConfigLoader.API
                     config = new();
                 }
                 //check for tags
-                if (DataEntry.StartsWith('[') && DataEntry.EndsWith(']')) 
+                if (DataEntry.StartsWith('!')) 
                 {
                     Log.WriteInfo("Line " + LineCounter.ToString() + " is a tag, calculating now.");
                     DoNotCreateNewEntry = true;
-                    string DataTags = DataEntry.Trim('[', ']');
-                    DataTags += DataTags.ToUpper();
+                    string DataTags = DataEntry;
+                    DataTags = DataTags.ToUpper();
+                    DataTags = DataTags.Trim('!');
                     string[] DataTagsArray = DataTags.Split(',');
                     foreach(string DataTag in DataTagsArray)
                     {
                         try
                         {
+                            Log.WriteInfo("Parsing Tag: " + DataTag);
                             Tags tag = Enum.Parse<Tags>(DataTag);
                             config.DataTags.Add(tag);
                         }
                         catch(ArgumentException ex)
                         {
-                            ex.ToString();
+                            Log.WriteError("Error occured while parsing tag: \n" + ex.ToString());
                             continue;
                         }
                     }
                 }
                 else //no tags
                 {
+                    Log.WriteInfo("No tags on line " + LineCounter.ToString() + " detected.");
                     DoNotCreateNewEntry = false;
                 }
                 //get key and value
@@ -163,6 +167,10 @@ namespace btelnyy.ConfigLoader.API
                 config.Data = Value;
                 config.OriginLine = LineCounter;
                 //add extra properties
+                if(config.DataTags.Count > 0)
+                {
+                    Log.WriteInfo("Line " + LineCounter.ToString() + " has tags attached. Tag count: " + config.DataTags.Count.ToString());
+                }
                 if (config.DataTags.Contains(Tags.READONLY))
                 {
                     Log.WriteInfo("Line " + LineCounter.ToString() + " is considered readonly, setting flag.");

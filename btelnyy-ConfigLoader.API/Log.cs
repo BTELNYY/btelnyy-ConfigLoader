@@ -14,6 +14,25 @@ namespace btelnyy.ConfigLoader.API
             Console.WriteLine(msg);
             Console.ResetColor();
         }
+        public static void WriteSuccess(string msg)
+        {
+            if (!InternalConfig.EnableLogging)
+            {
+                return;
+            }
+            Console.ForegroundColor = ConsoleColor.Green;
+            string date = DateTime.Now.ToString("dd-MM-yyyy");
+            string time = DateTime.Now.ToString("hh\\:mm\\:ss");
+            string file = InternalConfig.LogPath + date + ".log";
+            if (InternalConfig.ShowLogsInConsole)
+            {
+                Console.WriteLine("[" + time + " SUCCESS]: " + msg);
+            }
+            StreamWriter sw = new StreamWriter(file, append: true);
+            sw.Write("[" + time + " SUCCESS]: " + msg + "\n");
+            sw.Close();
+            Console.ResetColor();
+        }
         public static void WriteError(string msg)
         {
             if (!InternalConfig.EnableLogging)

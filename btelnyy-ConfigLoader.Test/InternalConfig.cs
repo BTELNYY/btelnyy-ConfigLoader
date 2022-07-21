@@ -9,7 +9,7 @@ namespace btelnyy.ConfigLoader.Test
     internal class InternalConfig
     {
         public static string LogPath = @".\";
-        public static bool EnableLogging = false;
+        public static bool EnableLogging = true;
         public static bool ShowLogsInConsole = true;
     }
 }

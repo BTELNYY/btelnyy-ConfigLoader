@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "btelnyy-ConfigLoader.API", "btelnyy-ConfigLoader.API\btelnyy-ConfigLoader.API.csproj", "{D78BF612-C7D2-4E68-B918-8FD0F51558D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "btelnyy.ConfigLoader.API", "btelnyy-ConfigLoader.API\btelnyy.ConfigLoader.API.csproj", "{D78BF612-C7D2-4E68-B918-8FD0F51558D9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "btelnyy-ConfigLoader.Test", "btelnyy-ConfigLoader.Test\btelnyy-ConfigLoader.Test.csproj", "{1D78FFB4-46C3-4E5F-9E5A-EA3D2D714A16}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "btelnyy.ConfigLoader.Test", "btelnyy-ConfigLoader.Test\btelnyy.ConfigLoader.Test.csproj", "{1D78FFB4-46C3-4E5F-9E5A-EA3D2D714A16}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
