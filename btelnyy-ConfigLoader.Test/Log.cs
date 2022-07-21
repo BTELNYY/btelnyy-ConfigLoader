@@ -10,8 +10,14 @@ namespace btelnyy.ConfigLoader.Test
     {
         public static void WriteLineColor(string msg, ConsoleColor color)
         {
-            Console.BackgroundColor = color;
+            Console.ForegroundColor = color;
             Console.WriteLine(msg);
+            string date = DateTime.Now.ToString("dd-MM-yyyy");
+            string time = DateTime.Now.ToString("hh\\:mm\\:ss");
+            string file = InternalConfig.LogPath + date + ".log";
+            StreamWriter sw = new StreamWriter(file, append: true);
+            sw.Write("[" + time + " NO TAG]: " + msg + "\n");
+            sw.Close();
             Console.ResetColor();
         }
         public static void WriteSuccess(string msg)

@@ -21,7 +21,7 @@ namespace btelnyy.ConfigLoader.Test
                         Log.WriteError("Invalid command. Use 'help' for help.");
                         break;
                     case "help":
-                        Log.WriteInfo("HELP: \n - loadfile <filepath>: Load a file for later use. (Access with the same filepath) \n - amounttest <amount> <filepath>: run a quick test for preformance with large or small amounts of data.");
+                        Log.WriteInfo("HELP: \n - loadfile <filepath>: Load a file for later use. (Access with the same filepath) \n - amounttest <amount> <filepath>: run a quick test for preformance with large or small amounts of data. \n - getdata <filepath> <key>: get the value of a specific key in a specific file. \n - setdata <filepath> <key> <value>: Set a value in a file with a key. \n - getdatainfo <filepath> <key>: Get a overview of a key.");
                         break;
                     case "amounttest":
                         AmountTest(args);
@@ -29,12 +29,30 @@ namespace btelnyy.ConfigLoader.Test
                     case "loadfile":
                         LoadFile(args);
                         break;
+                    case "getdata":
+                        GetData(args);
+                        break;
+                    case "setdata":
+                        SetData(args);
+                        break;
+                    case "getdatainfo":
+                        GetDataInfo(args);
+                        break;
                 }
             }catch(Exception ex)
             {
                 Log.WriteError("An error occured while executing your command. \n Message: " + ex.Message + " \n Trace: " + ex.ToString());
             }
 
+        }
+        public static void GetDataInfo(string[] args)
+        {
+            if (args.Length < 3)
+            {
+                Log.WriteError("Invalid syntax: getdata <filepath> <key>.");
+                return;
+            }
+            Log.WriteLineColor(ConfigManager.GetConfiguration(args[1]).GetDataInfo(args[2]), ConsoleColor.White);
         }
         public static void LoadFile(string[] args)
         {
@@ -47,6 +65,25 @@ namespace btelnyy.ConfigLoader.Test
             cd.LoadFile(args[1]);
             ConfigManager.AddConfiguration(cd);
             Log.WriteSuccess("Loaded file.");
+        }
+        public static void GetData(string[] args)
+        {
+            if (args.Length < 3)
+            {
+                Log.WriteError("Invalid syntax: getdata <filepath> <key>.");
+                return;
+            }
+            Log.WriteLineColor(ConfigManager.GetConfiguration(args[1]).GetString(args[2], "not found"), ConsoleColor.White);
+        }
+        public static void SetData(string[] args)
+        {
+            if (args.Length < 4)
+            {
+                Log.WriteError("Invalid syntax: getdata <filepath> <key> <value>.");
+                return;
+            }
+            ConfigManager.GetConfiguration(args[1]).SetString(args[2], args[3]);
+            Log.WriteSuccess("Done.");
         }
         public static void AmountTest(string[] args)
         {

@@ -10,7 +10,7 @@ namespace btelnyy.ConfigLoader.API
     {
         public static void WriteLineColor(string msg, ConsoleColor color)
         {
-            Console.BackgroundColor = color;
+            Console.ForegroundColor = color;
             Console.WriteLine(msg);
             Console.ResetColor();
         }

@@ -19,6 +19,10 @@ namespace btelnyy.ConfigLoader.API
         {
             return FilePath;
         }
+        public string GetDataInfo(string key)
+        {
+            return Configs[key].ToString();
+        }
         /// <summary>
         /// Get all keys of the current config file.
         /// </summary>
