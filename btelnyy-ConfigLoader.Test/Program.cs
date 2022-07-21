@@ -16,6 +16,8 @@ namespace btelnyy.ConfigLoader.Test
             //enable logging
             InternalConfig.EnableLogging = true;
             Console.WriteLine("btelnyy-ConfigLoader Test Application");
+            Console.WriteLine("Test App Version: " + Config.Version);
+            Console.WriteLine("API Version: " + InternalConfig.Version);
             Console.WriteLine("You are in a command prompt. use 'help' for help.");
             while (true)
             {

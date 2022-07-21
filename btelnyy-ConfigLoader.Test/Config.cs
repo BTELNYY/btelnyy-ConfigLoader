@@ -11,5 +11,6 @@ namespace btelnyy.ConfigLoader.Test
         public static string LogPath = @".\";
         public static bool EnableLogging = true;
         public static bool ShowLogsInConsole = true;
+        public static readonly string Version = "1.0.0";
     }
 }

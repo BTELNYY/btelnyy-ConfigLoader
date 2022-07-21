@@ -12,5 +12,6 @@ namespace btelnyy.ConfigLoader.API
         public static bool EnableLogging = false;
         public static bool ShowLogsInConsole = true;
         public static bool ShowConversionWarnings = false;
+        public static readonly string Version = "1.0.0";
     }
 }
