@@ -352,6 +352,17 @@ namespace btelnyy.ConfigLoader.API
             return Configs[key].Data;
         }
         /// <summary>
+        /// Clear the dictionary and reload the configs from file.
+        /// </summary>
+        public void ReloadFile()
+        {
+            Log.WriteInfo("Database original length: " + Configs.Count);
+            Configs.Clear();
+            Log.WriteInfo("Cleared Config database. File: " + FilePath);
+            LoadFile(FilePath);
+            Log.WriteInfo("New database length: " + Configs.Count);
+        }
+        /// <summary>
         /// Gets a value based on the input parameters
         /// </summary>
         /// <param name="key"></param>
@@ -369,7 +380,28 @@ namespace btelnyy.ConfigLoader.API
                 cfg.OriginLine = (Utility.GetLength(FilePath) + 1);
                 Utility.LineChange(FilePath, (Utility.GetLength(FilePath) + 1), Utility.LineBuilder(key, defaultvalue.ToString()));
             }
-            return Convert.ToInt32(Configs[key].Data);
+            try
+            {
+                return Convert.ToInt32(Configs[key].Data);
+            }
+            catch(Exception ex)
+            {
+                if (InternalConfig.ShowConversionWarnings)
+                {
+                    Log.WriteWarning("Error occured parsing value " + Configs[key].Data + "\n" + ex.ToString());
+                }
+                //neat trick to get around parsing bools
+                string datatoparse = Configs[key].Data;
+                bool parsed = false;
+                if(bool.TryParse(datatoparse, out parsed))
+                {
+                    return Convert.ToInt32(parsed);
+                }
+                else
+                {
+                    return defaultvalue;
+                }
+            }
         }
         /// <summary>
         /// Gets a value based on the input parameters
@@ -389,7 +421,27 @@ namespace btelnyy.ConfigLoader.API
                 cfg.OriginLine = (Utility.GetLength(FilePath) + 1);
                 Utility.LineChange(FilePath, (Utility.GetLength(FilePath) + 1), Utility.LineBuilder(key, defaultvalue.ToString()));
             }
-            return Convert.ToBoolean(Configs[key].Data);
+            try
+            {
+                return Convert.ToBoolean(Configs[key].Data.ToLower());
+            }
+            catch(Exception ex)
+            {
+                if (InternalConfig.ShowConversionWarnings)
+                {
+                    Log.WriteWarning("Error occured parsing value " + Configs[key].Data + "\n" + ex.ToString());
+                }
+                string datatoparse = Configs[key].Data;
+                int parsed = 0;
+                if (int.TryParse(datatoparse, out parsed))
+                {
+                    return Convert.ToBoolean(parsed);
+                }
+                else
+                {
+                    return defaultvalue;
+                }
+            }
         }
     }
 }

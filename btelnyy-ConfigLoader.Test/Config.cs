@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace btelnyy.ConfigLoader.Test
 {
-    internal class InternalConfig
+    internal class Config
     {
         public static string LogPath = @".\";
         public static bool EnableLogging = true;

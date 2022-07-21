@@ -14,7 +14,7 @@ namespace btelnyy.ConfigLoader.Test
             Console.WriteLine(msg);
             string date = DateTime.Now.ToString("dd-MM-yyyy");
             string time = DateTime.Now.ToString("hh\\:mm\\:ss");
-            string file = InternalConfig.LogPath + date + ".log";
+            string file = Config.LogPath + date + ".log";
             StreamWriter sw = new StreamWriter(file, append: true);
             sw.Write("[" + time + " NO TAG]: " + msg + "\n");
             sw.Close();
@@ -22,15 +22,15 @@ namespace btelnyy.ConfigLoader.Test
         }
         public static void WriteSuccess(string msg)
         {
-            if (!InternalConfig.EnableLogging)
+            if (!Config.EnableLogging)
             {
                 return;
             }
             Console.ForegroundColor = ConsoleColor.Green;
             string date = DateTime.Now.ToString("dd-MM-yyyy");
             string time = DateTime.Now.ToString("hh\\:mm\\:ss");
-            string file = InternalConfig.LogPath + date + ".log";
-            if (InternalConfig.ShowLogsInConsole)
+            string file = Config.LogPath + date + ".log";
+            if (Config.ShowLogsInConsole)
             {
                 Console.WriteLine("[" + time + " SUCCESS]: " + msg);
             }
@@ -41,15 +41,15 @@ namespace btelnyy.ConfigLoader.Test
         }
         public static void WriteError(string msg)
         {
-            if (!InternalConfig.EnableLogging)
+            if (!Config.EnableLogging)
             {
                 return;
             }
             Console.ForegroundColor = ConsoleColor.Red;
             string date = DateTime.Now.ToString("dd-MM-yyyy");
             string time = DateTime.Now.ToString("hh\\:mm\\:ss");
-            string file = InternalConfig.LogPath + date + ".log";
-            if (InternalConfig.ShowLogsInConsole)
+            string file = Config.LogPath + date + ".log";
+            if (Config.ShowLogsInConsole)
             {
                 Console.WriteLine("[" + time + " ERROR]: " + msg);
             }
@@ -60,15 +60,15 @@ namespace btelnyy.ConfigLoader.Test
         }
         public static void WriteFatal(string msg)
         {
-            if (!InternalConfig.EnableLogging)
+            if (!Config.EnableLogging)
             {
                 return;
             }
             Console.ForegroundColor = ConsoleColor.Red;
             string date = DateTime.Now.ToString("dd-MM-yyyy");
             string time = DateTime.Now.ToString("hh\\:mm\\:ss");
-            string file = InternalConfig.LogPath + date + ".log";
-            if (InternalConfig.ShowLogsInConsole)
+            string file = Config.LogPath + date + ".log";
+            if (Config.ShowLogsInConsole)
             {
                 Console.WriteLine("[" + time + " FATAL ERROR]: " + msg);
             }
@@ -79,15 +79,15 @@ namespace btelnyy.ConfigLoader.Test
         }
         public static void WriteWarning(string msg)
         {
-            if (!InternalConfig.EnableLogging)
+            if (!Config.EnableLogging)
             {
                 return;
             }
             Console.ForegroundColor = ConsoleColor.Yellow;
             string date = DateTime.Now.ToString("dd-MM-yyyy");
             string time = DateTime.Now.ToString("hh\\:mm\\:ss");
-            string file = InternalConfig.LogPath + date + ".log";
-            if (InternalConfig.ShowLogsInConsole)
+            string file = Config.LogPath + date + ".log";
+            if (Config.ShowLogsInConsole)
             {
                 Console.WriteLine("[" + time + " WARNING]: " + msg);
             }
@@ -98,15 +98,15 @@ namespace btelnyy.ConfigLoader.Test
         }
         public static void WriteInfo(string msg)
         {
-            if (!InternalConfig.EnableLogging)
+            if (!Config.EnableLogging)
             {
                 return;
             }
             Console.ForegroundColor = ConsoleColor.White;
             string date = DateTime.Now.ToString("dd-MM-yyyy");
             string time = DateTime.Now.ToString("hh\\:mm\\:ss");
-            string file = InternalConfig.LogPath + date + ".log";
-            if (InternalConfig.ShowLogsInConsole)
+            string file = Config.LogPath + date + ".log";
+            if (Config.ShowLogsInConsole)
             {
                 Console.WriteLine("[" + time + " INFO]: " + msg);
             }
@@ -117,15 +117,15 @@ namespace btelnyy.ConfigLoader.Test
         }
         public static void WriteDebug(string msg)
         {
-            if (!InternalConfig.EnableLogging)
+            if (!Config.EnableLogging)
             {
                 return;
             }
             Console.ForegroundColor = ConsoleColor.Gray;
             string date = DateTime.Now.ToString("dd-MM-yyyy");
             string time = DateTime.Now.ToString("hh\\:mm\\:ss");
-            string file = InternalConfig.LogPath + date + ".log";
-            if (InternalConfig.ShowLogsInConsole)
+            string file = Config.LogPath + date + ".log";
+            if (Config.ShowLogsInConsole)
             {
                 Console.WriteLine("[" + time + " DEBUG]: " + msg);
             }
@@ -136,15 +136,15 @@ namespace btelnyy.ConfigLoader.Test
         }
         public static void WriteVerbose(string msg)
         {
-            if (!InternalConfig.EnableLogging)
+            if (!Config.EnableLogging)
             {
                 return;
             }
             Console.ForegroundColor = ConsoleColor.Gray;
             string date = DateTime.Now.ToString("dd-MM-yyyy");
             string time = DateTime.Now.ToString("hh\\:mm\\:ss");
-            string file = InternalConfig.LogPath + date + ".log";
-            if (InternalConfig.ShowLogsInConsole)
+            string file = Config.LogPath + date + ".log";
+            if (Config.ShowLogsInConsole)
             {
                 Console.WriteLine("[" + time + " VERBOSE]: " + msg);
             }
@@ -155,15 +155,15 @@ namespace btelnyy.ConfigLoader.Test
         }
         public static void WriteCritical(string msg)
         {
-            if (!InternalConfig.EnableLogging)
+            if (!Config.EnableLogging)
             {
                 return;
             }
             Console.ForegroundColor = ConsoleColor.DarkRed;
             string date = DateTime.Now.ToString("dd-MM-yyyy");
             string time = DateTime.Now.ToString("hh\\:mm\\:ss");
-            string file = InternalConfig.LogPath + date + ".log";
-            if (InternalConfig.ShowLogsInConsole)
+            string file = Config.LogPath + date + ".log";
+            if (Config.ShowLogsInConsole)
             {
                 Console.WriteLine("[" + time + " CRITICAL]: " + msg);
             }

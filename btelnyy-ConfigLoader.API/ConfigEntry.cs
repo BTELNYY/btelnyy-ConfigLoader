@@ -26,10 +26,10 @@ namespace btelnyy.ConfigLoader.API
                     str += ",";
                     continue;
                 }
-                str += "\n";
             }
+            str += "\n";
             str += "Readonly: " + Readonly.ToString() + "\n";
-            str += "Origin Line: " + OriginLine.ToString() + "\n";
+            str += "Origin Line: " + OriginLine.ToString();
             return str;
         }
     }

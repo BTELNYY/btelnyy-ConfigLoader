@@ -14,7 +14,7 @@ namespace btelnyy.ConfigLoader.Test
         public static void Main()
         {
             //enable logging
-            ConfigManager.EditInternalConfig(InternalConfigOptions.ENABLE_LOGGING, true);
+            InternalConfig.EnableLogging = true;
             Console.WriteLine("btelnyy-ConfigLoader Test Application");
             Console.WriteLine("You are in a command prompt. use 'help' for help.");
             while (true)

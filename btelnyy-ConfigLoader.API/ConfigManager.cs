@@ -77,9 +77,5 @@ namespace btelnyy.ConfigLoader.API
                 return;
             }
         }
-        public static void EditInternalConfig(InternalConfigOptions option, object value)
-        {
-            InternalConfig.HandleConfig(option, value);
-        }
     }
 }
