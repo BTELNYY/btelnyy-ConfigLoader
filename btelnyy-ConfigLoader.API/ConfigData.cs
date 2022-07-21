@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Security;
+using System.Diagnostics;
 
 namespace btelnyy.ConfigLoader.API
 {
-    public class ConfigLoader
+    public class ConfigData
     {
-        readonly Dictionary<string, Config> Configs = new();
+        readonly Dictionary<string, ConfigEntry> Configs = new();
         string FilePath = "";
         /// <summary>
         /// Get the file path of the current configuration object
@@ -64,6 +65,7 @@ namespace btelnyy.ConfigLoader.API
                 Entries.Add(Utility.LineBuilder(key, dict[key]));
             }
             File.WriteAllLines(filePath, Entries);
+            Log.WriteInfo("Created new file: " + filePath + " Entries: " + dict.Count.ToString());
             LoadFile(filePath);
         }
         /// <summary>
@@ -75,7 +77,7 @@ namespace btelnyy.ConfigLoader.API
         /// <param name="dict">
         /// Dictionary which will be inputed into the file.
         /// </param>
-        public void CreateConfigFile(string filePath, Dictionary<string, Config> dict)
+        public void CreateConfigFile(string filePath, Dictionary<string, ConfigEntry> dict)
         {
             LinkedList<string> Entries = new();
             foreach (string key in dict.Keys)
@@ -84,6 +86,7 @@ namespace btelnyy.ConfigLoader.API
                 Entries.AddLast(Utility.LineBuilder(key, dict[key].Data));
             }
             File.WriteAllLines(filePath, Entries);
+            Log.WriteInfo("Created new file: " + filePath + " Entries: " + dict.Count.ToString());
             LoadFile(filePath);
         }
         /// <summary>
@@ -92,12 +95,15 @@ namespace btelnyy.ConfigLoader.API
         /// <param name="Path"></param>
         public void LoadFile(string Path)
         {
+            Stopwatch sw = new();
+            sw.Start();
+            Log.WriteInfo("Loading file " + Path + "!");
             FilePath = Path;
             //read all text from the file
             string FileData = File.ReadAllText(Path);
             //split by newline
             string[] Data = FileData.Split('\n');
-            Config config = new();
+            ConfigEntry config = new();
             //for tags and such
             bool DoNotCreateNewEntry = false;
             int LineCounter = 0;
@@ -106,17 +112,20 @@ namespace btelnyy.ConfigLoader.API
                 //exclude comments
                 if (DataEntry.StartsWith('#'))
                 {
+                    Log.WriteInfo("Comment on line " + LineCounter.ToString() + " ignored.");
                     //make sure comments still count as a line, so they wont get overwritten
                     LineCounter++;
                     continue;
                 }
                 if (!DoNotCreateNewEntry)
                 {
+                    Log.WriteInfo("Creating new entry! Line: " + LineCounter.ToString());
                     config = new();
                 }
                 //check for tags
                 if (DataEntry.StartsWith('[') && DataEntry.EndsWith(']')) 
                 {
+                    Log.WriteInfo("Line " + LineCounter.ToString() + " is a tag, calculating now.");
                     DoNotCreateNewEntry = true;
                     string DataTags = DataEntry.Trim('[', ']');
                     DataTags += DataTags.ToUpper();
@@ -146,6 +155,7 @@ namespace btelnyy.ConfigLoader.API
                 //if the value contains ":"
                 if(DataEntryParts.Length > 2)
                 {
+                    Log.WriteInfo("Multiple colons detected, skipping first to create value. Line: " + LineCounter.ToString());
                     string[] DataValues = DataEntryParts.Skip(1).ToArray();
                     Value = string.Concat(DataValues);
                 }
@@ -155,11 +165,14 @@ namespace btelnyy.ConfigLoader.API
                 //add extra properties
                 if (config.DataTags.Contains(Tags.READONLY))
                 {
+                    Log.WriteInfo("Line " + LineCounter.ToString() + " is considered readonly, setting flag.");
                     config.Readonly = true;
                 }
                 Configs.Add(Key, config);
                 LineCounter++;
             }
+            sw.Stop();
+            Log.WriteDebug("Loading file with length of " + Configs.Count.ToString() + " took " + sw.ElapsedMilliseconds + "ms");
         }
         /// <summary>
         /// Add tags to an entry.
@@ -240,7 +253,7 @@ namespace btelnyy.ConfigLoader.API
         {
             if (!Configs.ContainsKey(key))
             {
-                Config cfg = new();
+                ConfigEntry cfg = new();
                 cfg.Data = value;
                 Configs.Add(key, cfg);
                 return;
@@ -265,7 +278,7 @@ namespace btelnyy.ConfigLoader.API
         {
             if (!Configs.ContainsKey(key))
             {
-                Config cfg = new();
+                ConfigEntry cfg = new();
                 cfg.Data = value.ToString();
                 Configs.Add(key, cfg);
                 return;
@@ -290,7 +303,7 @@ namespace btelnyy.ConfigLoader.API
         {
             if (!Configs.ContainsKey(key))
             {
-                Config cfg = new();
+                ConfigEntry cfg = new();
                 cfg.Data = value.ToString();
                 Configs.Add(key, cfg);
                 return;
@@ -315,7 +328,7 @@ namespace btelnyy.ConfigLoader.API
         {
             if (!Configs.ContainsKey(key))
             {
-                Config cfg = new();
+                ConfigEntry cfg = new();
                 cfg.Data = defaultvalue;
                 cfg.OriginLine = (Utility.GetLength(FilePath) + 1);
                 Utility.LineChange(FilePath, (Utility.GetLength(FilePath) + 1), Utility.LineBuilder(key, defaultvalue.ToString()));
@@ -335,7 +348,7 @@ namespace btelnyy.ConfigLoader.API
         {
             if (!Configs.ContainsKey(key))
             {
-                Config cfg = new();
+                ConfigEntry cfg = new();
                 cfg.Data = defaultvalue.ToString();
                 Configs.Add(key, cfg);
                 cfg.OriginLine = (Utility.GetLength(FilePath) + 1);
@@ -355,7 +368,7 @@ namespace btelnyy.ConfigLoader.API
         {
             if (!Configs.ContainsKey(key))
             {
-                Config cfg = new();
+                ConfigEntry cfg = new();
                 cfg.Data = defaultvalue.ToString();
                 Configs.Add(key, cfg);
                 cfg.OriginLine = (Utility.GetLength(FilePath) + 1);

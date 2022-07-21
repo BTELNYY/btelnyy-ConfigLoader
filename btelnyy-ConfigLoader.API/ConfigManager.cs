@@ -8,7 +8,7 @@ namespace btelnyy.ConfigLoader.API
 {
     public class ConfigManager
     {
-        static readonly Dictionary<string, ConfigLoader> ConfigLoaders = new();
+        static readonly Dictionary<string, ConfigData> ConfigLoaders = new();
         /// <summary>
         /// Get existing configuration from the in built dictionary
         /// </summary>
@@ -18,13 +18,13 @@ namespace btelnyy.ConfigLoader.API
         /// <returns>
         /// Instance of the ConfigLoader Object
         /// </returns>
-        public static ConfigLoader GetConfiguration(string FilePath)
+        public static ConfigData GetConfiguration(string FilePath)
         {
             if (ConfigLoaders.ContainsKey(FilePath))
             {
                 return ConfigLoaders[FilePath];
             }
-            ConfigLoader cl = new();
+            ConfigData cl = new();
             cl.LoadFile(FilePath);
             ConfigLoaders.Add(FilePath, cl);
             return cl;
@@ -36,13 +36,13 @@ namespace btelnyy.ConfigLoader.API
         /// <returns>
         /// Instance of the ConfigLoader class
         /// </returns>
-        public static ConfigLoader LoadConfiguration(string FilePath)
+        public static ConfigData LoadConfiguration(string FilePath)
         {
             if (ConfigLoaders.ContainsKey(FilePath))
             {
                 return ConfigLoaders[FilePath];
             }
-            ConfigLoader cl = new();
+            ConfigData cl = new();
             cl.LoadFile(FilePath);
             ConfigLoaders.Add(FilePath, cl);
             return cl;
@@ -53,7 +53,7 @@ namespace btelnyy.ConfigLoader.API
         /// <param name="ConfigLoader">
         /// Instance of the ConfigLoader class which you wish to add as that files configuration
         /// </param>
-        public static void AddConfiguration(ConfigLoader ConfigLoader)
+        public static void AddConfiguration(ConfigData ConfigLoader)
         {
             string FilePath = ConfigLoader.GetFilePath();
             if (ConfigLoaders.ContainsKey(FilePath))
@@ -68,7 +68,7 @@ namespace btelnyy.ConfigLoader.API
         /// <param name="ConfigLoader">
         /// Instance of the ConfigLoader class
         /// </param>
-        public static void EditConfiguration(ConfigLoader ConfigLoader)
+        public static void EditConfiguration(ConfigData ConfigLoader)
         {
             string FilePath = ConfigLoader.GetFilePath();
             if (!ConfigLoaders.ContainsKey(FilePath))
@@ -77,7 +77,7 @@ namespace btelnyy.ConfigLoader.API
                 return;
             }
         }
-        public static void EditInternalConfig(InternalConfigOptions option, string value)
+        public static void EditInternalConfig(InternalConfigOptions option, object value)
         {
             InternalConfig.HandleConfig(option, value);
         }

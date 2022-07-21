@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace btelnyy.ConfigLoader.API
 {
-    public class Config
+    public class ConfigEntry
     {
         public string Data = "";
         public List<Tags> DataTags = new();

@@ -102,7 +102,7 @@ namespace btelnyy.ConfigLoader.API
             string file = InternalConfig.LogPath + date + ".log";
             if (InternalConfig.ShowLogsInConsole)
             {
-                Console.WriteLine("[" + time + " INFO]: " + msg);
+                Console.WriteLine("[" + time + " DEBUG]: " + msg);
             }
             StreamWriter sw = new StreamWriter(file, append: true);
             sw.Write("[" + time + " DEBUG]: " + msg + "\n");
