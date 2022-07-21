@@ -17,12 +17,19 @@ namespace btelnyy.ConfigLoader.Test
             ConfigManager.EditInternalConfig(InternalConfigOptions.ENABLE_LOGGING, true);
             Console.WriteLine("Testing config loader API");
             ConfigData cd = new();
+            testdict1.Add("#comment test", "test");
             testdict1.Add("string_test", "hi");
             testdict1.Add("bool_test", "true");
             testdict1.Add("int_test", "1");
             testdict1.Add("multi_colon_test", "SCP:SL:TEST");
+            int RunFor = 1000;
+            Log.WriteDebug("Running creating and loading " + RunFor.ToString() + " entries.");
+            for(int i = 0; i < RunFor; i++)
+            {
+                testdict1.Add("key_" + i.ToString(), "value_" + i.ToString());
+            }
             cd.CreateConfigFile(@".\config.txt", testdict1);
-            Console.Write("Press any to exit....");
+            Console.Write("Press enter to exit. . .");
             Console.Read();
         }
     }

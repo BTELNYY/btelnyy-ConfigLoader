@@ -173,6 +173,9 @@ namespace btelnyy.ConfigLoader.API
             }
             sw.Stop();
             Log.WriteDebug("Loading file with length of " + Configs.Count.ToString() + " took " + sw.ElapsedMilliseconds + "ms");
+            float TimePerEntry = (float) Configs.Count / (float) sw.ElapsedMilliseconds;
+            int ShownDigits = 2;
+            Log.WriteDebug("Took " + Math.Round(TimePerEntry, ShownDigits).ToString() + "ms per entry");
         }
         /// <summary>
         /// Add tags to an entry.
