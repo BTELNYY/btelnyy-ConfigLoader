@@ -18,9 +18,9 @@ namespace btelnyy.ConfigLoader.API
         {
             return File.ReadAllLines(FilePath).Length;
         }
-        public static string LineBuilder(string key, string value)
+        public static string LineBuilder(string key, string value, string seperator)
         {
-            return key + ":" + value;
+            return key + seperator + value;
         }
         public static string TagsLineBuilder(IEnumerable<Tags> tags)
         {

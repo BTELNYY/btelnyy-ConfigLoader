@@ -21,7 +21,7 @@ namespace btelnyy.ConfigLoader.Test
                         Log.WriteError("Invalid command. Use 'help' for help.");
                         break;
                     case "help":
-                        Log.WriteInfo("HELP: \n - loadfile <filepath>: Load a file for later use. (Access with the same filepath) \n - preformancetest <amount> <filepath>: Run a preformance test. Outputs test time after completion. \n - getdata <filepath> <key>: get the value of a specific key in a specific file. \n - setdata <filepath> <key> <value>: Set a value in a file with a key. \n - getdatainfo <filepath> <key>: Get a overview of a key. \n - reloadfile <filename>: Clear config and reload from file.");
+                        Log.WriteInfo("HELP: \n - loadfile <filepath>: Load a file for later use. (Access with the same filepath) \n - preformancetest <amount> <filepath>: Run a preformance test. Outputs test time after completion. \n - getdata <filepath> <key>: get the value of a specific key in a specific file. \n - setdata <filepath> <key> <value>: Set a value in a file with a key. \n - getdatainfo <filepath> <key>: Get a overview of a key. \n - reloadfile <filename>: Clear config and reload from file. \n - gettags <filename> <key>: Get a print out of all tags on the config object.");
                         break;
                     case "preformancetest":
                         PreformanceTest(args);
@@ -41,12 +41,23 @@ namespace btelnyy.ConfigLoader.Test
                     case "reloadfile":
                         ReloadFile(args);
                         break;
+                    case "gettags":
+                        GetFlags(args);
+                        break;
                 }
             }catch(Exception ex)
             {
                 Log.WriteError("An error occured while executing your command. \n Message: " + ex.Message + " \n Trace: " + ex.ToString());
             }
-
+        }
+        public static void GetFlags(string[] args)
+        {
+            if (args.Length < 3)
+            {
+                Log.WriteError("Invalid syntax: getdata <filepath> <key>.");
+                return;
+            }
+            Log.WriteLineColor(ConfigManager.GetConfiguration(args[1]).GetRawEntry(args[2]).GetTags(), ConsoleColor.White);
         }
         public static void GetDataInfo(string[] args)
         {

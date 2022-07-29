@@ -20,6 +20,10 @@ namespace btelnyy.ConfigLoader.API
             str += "Tags: ";
             foreach(Tags t in DataTags)
             {
+                if (DataTags.Contains(Tags.HIDE_TAGS))
+                {
+                    break;
+                }
                 str += t.ToString();
                 if(t != DataTags.Last())
                 {
@@ -28,9 +32,27 @@ namespace btelnyy.ConfigLoader.API
                 }
             }
             str += "\n";
-            str += "Readonly: " + Readonly.ToString() + "\n";
-            str += "Origin Line: " + OriginLine.ToString();
+            str += "Readonly: " + Readonly + "\n";
+            str += "Origin Line: " + OriginLine;
             return str;
+        }
+        public string GetTags()
+        {
+            string tags = "";
+            if (DataTags.Contains(Tags.HIDE_TAGS))
+            {
+                Log.WriteDebug("Tags are hidden, Actual amount: " + DataTags.Count);
+                return "Total Tags: 0";
+            }
+            tags += "Total Tags: " + DataTags.Count;
+            tags += "\n";
+            foreach(Tags t in DataTags)
+            {
+                tags += "Tag: " + t.ToString() + "\n";
+                tags += "Tag Index: " + (int) t + "\n";
+                tags += "Tag Hex: " + ((int) t).ToString("X") + "\n";
+            }
+            return tags;
         }
     }
     public enum Tags
@@ -39,5 +61,6 @@ namespace btelnyy.ConfigLoader.API
         HIDDEN,
         NOTIFY_ON_CHANGE,
         LOCK_TAGS,
+        HIDE_TAGS,
     }
 }

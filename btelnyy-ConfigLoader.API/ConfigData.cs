@@ -9,6 +9,28 @@ namespace btelnyy.ConfigLoader.API
     {
         readonly Dictionary<string, ConfigEntry> Configs = new();
         string FilePath = "";
+        string Seperator = ":";
+
+        /// <summary>
+        /// Get the config file sperator, this controls key value pairs. e.g. key:value or key=value
+        /// </summary>
+        /// <returns>
+        /// The string used to seperate the key value pairs
+        /// </returns>
+        public string GetSeperator()
+        {
+            return Seperator;
+        }
+        /// <summary>
+        /// Set the config file sperator, this controls key value pairs. e.g. key:value or key=value
+        /// </summary>
+        /// <param name="value">
+        /// The Seperator to set for the config value.
+        /// </param>
+        public void SetSeperator(string value)
+        {
+            Seperator = value;
+        }
         /// <summary>
         /// Get the file path of the current configuration object
         /// </summary>
@@ -19,6 +41,31 @@ namespace btelnyy.ConfigLoader.API
         {
             return FilePath;
         }
+        /// <summary>
+        /// Get the raw ConfigEntry type of a key
+        /// </summary>
+        /// <param name="key">
+        /// Key which to get data for
+        /// </param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">
+        /// Thrown if the key does not exist.
+        /// </exception>
+        public ConfigEntry GetRawEntry(string key)
+        {
+            if (!Configs.ContainsKey(key))
+            {
+                throw new ArgumentException("Key provided does not exist within the current configuration.", new NullReferenceException());
+            }
+            return Configs[key];
+        }
+        /// <summary>
+        /// Returns a overview of the key/value pair as a string.
+        /// </summary>
+        /// <param name="key">
+        /// Key which to show data for.
+        /// </param>
+        /// <returns></returns>
         public string GetDataInfo(string key)
         {
             return Configs[key].ToString();
@@ -53,6 +100,17 @@ namespace btelnyy.ConfigLoader.API
             return Configs.Count;
         }
         /// <summary>
+        /// Clear the dictionary and reload the configs from file.
+        /// </summary>
+        public void ReloadFile()
+        {
+            Log.WriteInfo("Database original length: " + Configs.Count);
+            Configs.Clear();
+            Log.WriteInfo("Cleared Config database. File: " + FilePath);
+            LoadFile(FilePath);
+            Log.WriteInfo("New database length: " + Configs.Count);
+        }
+        /// <summary>
         /// Create and Load a new config file from a dictionary. This  method does not add any Tags to the created configuration file
         /// </summary>
         /// <param name="filePath">
@@ -66,7 +124,7 @@ namespace btelnyy.ConfigLoader.API
             List<string> Entries = new();
             foreach(string key in dict.Keys)
             {
-                Entries.Add(Utility.LineBuilder(key, dict[key]));
+                Entries.Add(Utility.LineBuilder(key, dict[key], Seperator));
             }
             File.WriteAllLines(filePath, Entries);
             Log.WriteInfo("Created new file: " + filePath + " Entries: " + dict.Count.ToString());
@@ -87,7 +145,7 @@ namespace btelnyy.ConfigLoader.API
             foreach (string key in dict.Keys)
             {
                 Entries.AddLast(Utility.TagsLineBuilder(dict[key].DataTags));
-                Entries.AddLast(Utility.LineBuilder(key, dict[key].Data));
+                Entries.AddLast(Utility.LineBuilder(key, dict[key].Data, Seperator));
             }
             File.WriteAllLines(filePath, Entries);
             Log.WriteInfo("Created new file: " + filePath + " Entries: " + dict.Count.ToString());
@@ -157,7 +215,7 @@ namespace btelnyy.ConfigLoader.API
                     DoNotCreateNewEntry = false;
                 }
                 //get key and value
-                string[] DataEntryParts = DataEntry.Split(":");
+                string[] DataEntryParts = DataEntry.Split(Seperator);
                 string Key = DataEntryParts.First();
                 string Value = "";
                 //if the value contains ":"
@@ -268,8 +326,10 @@ namespace btelnyy.ConfigLoader.API
         {
             if (!Configs.ContainsKey(key))
             {
-                ConfigEntry cfg = new();
-                cfg.Data = value;
+                ConfigEntry cfg = new()
+                {
+                    Data = value
+                };
                 Configs.Add(key, cfg);
                 return;
             }
@@ -279,7 +339,7 @@ namespace btelnyy.ConfigLoader.API
                 throw new SecurityException("Value " + key + " is readonly!");
             }
             Configs[key].Data = value;
-            Utility.LineChange(FilePath, Configs[key].OriginLine, Utility.LineBuilder(key, value));
+            Utility.LineChange(FilePath, Configs[key].OriginLine, Utility.LineBuilder(key, value, Seperator));
         }
         /// <summary>
         /// Sets a value based on key and value
@@ -293,8 +353,10 @@ namespace btelnyy.ConfigLoader.API
         {
             if (!Configs.ContainsKey(key))
             {
-                ConfigEntry cfg = new();
-                cfg.Data = value.ToString();
+                ConfigEntry cfg = new()
+                {
+                    Data = value.ToString()
+                };
                 Configs.Add(key, cfg);
                 return;
             }
@@ -304,7 +366,7 @@ namespace btelnyy.ConfigLoader.API
                 throw new SecurityException("Value " + key + " is readonly!");
             }
             Configs[key].Data = value.ToString();
-            Utility.LineChange(FilePath, Configs[key].OriginLine, Utility.LineBuilder(key, value.ToString()));
+            Utility.LineChange(FilePath, Configs[key].OriginLine, Utility.LineBuilder(key, value.ToString(), Seperator));
         }
         /// <summary>
         /// Sets a value based on key and value
@@ -318,8 +380,10 @@ namespace btelnyy.ConfigLoader.API
         {
             if (!Configs.ContainsKey(key))
             {
-                ConfigEntry cfg = new();
-                cfg.Data = value.ToString();
+                ConfigEntry cfg = new()
+                {
+                    Data = value.ToString()
+                };
                 Configs.Add(key, cfg);
                 return;
             }
@@ -329,7 +393,7 @@ namespace btelnyy.ConfigLoader.API
                 throw new SecurityException("Value " + key + " is readonly!");
             }
             Configs[key].Data = value.ToString();
-            Utility.LineChange(FilePath, Configs[key].OriginLine, Utility.LineBuilder(key, value.ToString()));
+            Utility.LineChange(FilePath, Configs[key].OriginLine, Utility.LineBuilder(key, value.ToString(), Seperator));
         }
         /// <summary>
         /// Gets a value based on the input parameters
@@ -343,24 +407,15 @@ namespace btelnyy.ConfigLoader.API
         {
             if (!Configs.ContainsKey(key))
             {
-                ConfigEntry cfg = new();
-                cfg.Data = defaultvalue;
-                cfg.OriginLine = (Utility.GetLength(FilePath) + 1);
-                Utility.LineChange(FilePath, (Utility.GetLength(FilePath) + 1), Utility.LineBuilder(key, defaultvalue.ToString()));
+                ConfigEntry cfg = new()
+                {
+                    Data = defaultvalue,
+                    OriginLine = (Utility.GetLength(FilePath) + 1)
+                };
+                Utility.LineChange(FilePath, (Utility.GetLength(FilePath) + 1), Utility.LineBuilder(key, defaultvalue.ToString(), Seperator));
                 Configs.Add(key, cfg);
             }
             return Configs[key].Data;
-        }
-        /// <summary>
-        /// Clear the dictionary and reload the configs from file.
-        /// </summary>
-        public void ReloadFile()
-        {
-            Log.WriteInfo("Database original length: " + Configs.Count);
-            Configs.Clear();
-            Log.WriteInfo("Cleared Config database. File: " + FilePath);
-            LoadFile(FilePath);
-            Log.WriteInfo("New database length: " + Configs.Count);
         }
         /// <summary>
         /// Gets a value based on the input parameters
@@ -374,11 +429,13 @@ namespace btelnyy.ConfigLoader.API
         {
             if (!Configs.ContainsKey(key))
             {
-                ConfigEntry cfg = new();
-                cfg.Data = defaultvalue.ToString();
+                ConfigEntry cfg = new()
+                {
+                    Data = defaultvalue.ToString()
+                };
                 Configs.Add(key, cfg);
                 cfg.OriginLine = (Utility.GetLength(FilePath) + 1);
-                Utility.LineChange(FilePath, (Utility.GetLength(FilePath) + 1), Utility.LineBuilder(key, defaultvalue.ToString()));
+                Utility.LineChange(FilePath, (Utility.GetLength(FilePath) + 1), Utility.LineBuilder(key, defaultvalue.ToString(), Seperator));
             }
             try
             {
@@ -392,8 +449,7 @@ namespace btelnyy.ConfigLoader.API
                 }
                 //neat trick to get around parsing bools
                 string datatoparse = Configs[key].Data;
-                bool parsed = false;
-                if(bool.TryParse(datatoparse, out parsed))
+                if (bool.TryParse(datatoparse, out bool parsed))
                 {
                     return Convert.ToInt32(parsed);
                 }
@@ -415,11 +471,13 @@ namespace btelnyy.ConfigLoader.API
         {
             if (!Configs.ContainsKey(key))
             {
-                ConfigEntry cfg = new();
-                cfg.Data = defaultvalue.ToString();
+                ConfigEntry cfg = new()
+                {
+                    Data = defaultvalue.ToString()
+                };
                 Configs.Add(key, cfg);
                 cfg.OriginLine = (Utility.GetLength(FilePath) + 1);
-                Utility.LineChange(FilePath, (Utility.GetLength(FilePath) + 1), Utility.LineBuilder(key, defaultvalue.ToString()));
+                Utility.LineChange(FilePath, (Utility.GetLength(FilePath) + 1), Utility.LineBuilder(key, defaultvalue.ToString(), Seperator));
             }
             try
             {
@@ -432,8 +490,7 @@ namespace btelnyy.ConfigLoader.API
                     Log.WriteWarning("Error occured parsing value " + Configs[key].Data + "\n" + ex.ToString());
                 }
                 string datatoparse = Configs[key].Data;
-                int parsed = 0;
-                if (int.TryParse(datatoparse, out parsed))
+                if (int.TryParse(datatoparse, out int parsed))
                 {
                     return Convert.ToBoolean(parsed);
                 }
