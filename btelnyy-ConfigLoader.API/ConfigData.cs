@@ -248,6 +248,75 @@ namespace btelnyy.ConfigLoader.API
             Log.WriteDebug("Took " + Math.Round(TimePerEntry, ShownDigits).ToString() + "ms per entry");
         }
         /// <summary>
+        /// Same as AddTags, except only adds one tag.
+        /// </summary>
+        /// <param name="key">
+        /// Key to apply to
+        /// </param>
+        /// <param name="tag">
+        /// Tag to add
+        /// </param>
+        /// <exception cref="ArgumentException">
+        /// Key is not found
+        /// </exception>
+        /// <exception cref="SecurityException">
+        /// Tags are write-protected
+        /// </exception>
+        public void AddTag(string key, Tags tag)
+        {
+            Tags[] tags = { tag }; 
+            if (!Configs.ContainsKey(key))
+            {
+                throw new ArgumentException("Key " + key + " is not found, load it with GetString() before adding tags.");
+            }
+            if (Configs[key].DataTags.Contains(Tags.LOCK_TAGS))
+            {
+                throw new SecurityException("Key " + key + "has tags locked! Tags cannot be modified for this key.");
+            }
+            List<string> lines = File.ReadAllLines(FilePath).ToList();
+            int configLine = Configs[key].OriginLine;
+            lines.Insert(configLine - 1, Utility.TagsLineBuilder(tags));
+            File.WriteAllLines(FilePath, lines.ToArray());
+        }
+        /// <summary>
+        /// Same as RemoveTags, except only removes one tag.
+        /// </summary>
+        /// <param name="key">
+        /// Key to apply to
+        /// </param>
+        /// <param name="tag">
+        /// Tag to remove
+        /// </param>
+        /// <exception cref="ArgumentException">
+        /// Key is not found
+        /// </exception>
+        /// <exception cref="SecurityException">
+        /// Tags are write-protected
+        /// </exception>
+        public void RemoveTag(string key, Tags tag)
+        {
+            Tags[] tags = { tag };
+            if (!Configs.ContainsKey(key))
+            {
+                throw new ArgumentException("Key " + key + " is not found, load it with GetString() before adding tags.");
+            }
+            if (Configs[key].DataTags.Contains(Tags.LOCK_TAGS))
+            {
+                throw new SecurityException("Key " + key + "has tags locked! Tags cannot be modified for this key.");
+            }
+            foreach (Tags t in tags)
+            {
+                if (Configs[key].DataTags.Contains(t))
+                {
+                    Configs[key].DataTags.Remove(t);
+                }
+            }
+            List<string> lines = File.ReadAllLines(FilePath).ToList();
+            int configLine = Configs[key].OriginLine;
+            lines.Insert(configLine - 1, Utility.TagsLineBuilder(Configs[key].DataTags));
+            File.WriteAllLines(FilePath, lines.ToArray());
+        }
+        /// <summary>
         /// Add tags to an entry.
         /// </summary>
         /// <param name="key">
@@ -337,6 +406,10 @@ namespace btelnyy.ConfigLoader.API
             if (Configs[key].Readonly)
             {
                 throw new SecurityException("Value " + key + " is readonly!");
+            }
+            if (Configs[key].DataTags.Contains(Tags.NOTIFY_ON_CHANGE))
+            {
+                Log.WriteInfo("Value of " + key + " has changed! This message is being sent becuase the key has the NOTIFY_ON_CHANGE tag");
             }
             Configs[key].Data = value;
             Utility.LineChange(FilePath, Configs[key].OriginLine, Utility.LineBuilder(key, value, Seperator));
