@@ -11,6 +11,7 @@ namespace btelnyy.ConfigLoader.API
         string FilePath = "";
         string Seperator = ":";
 
+        #region Getters and Setters.
         /// <summary>
         /// Get the config file sperator, this controls key value pairs. e.g. key:value or key=value
         /// </summary>
@@ -99,6 +100,9 @@ namespace btelnyy.ConfigLoader.API
         {
             return Configs.Count;
         }
+        #endregion
+
+        #region Main Methods: Loading, Reloading, Creating files.
         /// <summary>
         /// Clear the dictionary and reload the configs from file.
         /// </summary>
@@ -247,6 +251,9 @@ namespace btelnyy.ConfigLoader.API
             int ShownDigits = 2;
             Log.WriteDebug("Took " + Math.Round(TimePerEntry, ShownDigits).ToString() + "ms per entry");
         }
+        #endregion
+
+        #region Data Manipulation: Getting Data, Setting Data, Adding and Removing Tags
         /// <summary>
         /// Same as AddTags, except only adds one tag.
         /// </summary>
@@ -469,6 +476,28 @@ namespace btelnyy.ConfigLoader.API
             Utility.LineChange(FilePath, Configs[key].OriginLine, Utility.LineBuilder(key, value.ToString(), Seperator));
         }
         /// <summary>
+        /// Load a key without actually returning it
+        /// </summary>
+        /// <param name="key">
+        /// The key which to load
+        /// </param>
+        /// <param name="defaultvalue">
+        /// The default value in which to put if the key is not found
+        /// </param>
+        public void LoadKey(string key, string defaultvalue) 
+        {
+            if (!Configs.ContainsKey(key))
+            {
+                ConfigEntry cfg = new()
+                {
+                    Data = defaultvalue,
+                    OriginLine = (Utility.GetLength(FilePath) + 1)
+                };
+                Utility.LineChange(FilePath, (Utility.GetLength(FilePath) + 1), Utility.LineBuilder(key, defaultvalue.ToString(), Seperator));
+                Configs.Add(key, cfg);
+            }
+        }
+        /// <summary>
         /// Gets a value based on the input parameters
         /// </summary>
         /// <param name="key"></param>
@@ -573,5 +602,6 @@ namespace btelnyy.ConfigLoader.API
                 }
             }
         }
+        #endregion
     }
 }
