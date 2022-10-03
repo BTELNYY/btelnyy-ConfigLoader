@@ -11,7 +11,14 @@ namespace btelnyy.ConfigLoader.API
         public static void LineChange(string FileName, int LineToEdit, string NewText)
         {
             string[] arrLine = File.ReadAllLines(FileName);
-            arrLine[LineToEdit] = NewText;
+            if(arrLine.Length < LineToEdit)
+            {
+                arrLine.Append(NewText);
+            }
+            else
+            {
+                arrLine[LineToEdit] = NewText;
+            }
             File.WriteAllLines(FileName, arrLine);
         }
         public static int GetLength(string FilePath)
