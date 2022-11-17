@@ -520,6 +520,96 @@ namespace btelnyy.ConfigLoader.API
             return Configs[key].Data;
         }
         /// <summary>
+        /// Get a unsigned int from config
+        /// </summary>
+        /// <param name="key">
+        /// Key name
+        /// </param>
+        /// <param name="defaultvalue">
+        /// Default value to write if value not found
+        /// </param>
+        /// <returns>
+        /// uint value of the key
+        /// </returns>
+        public uint GetUInt(string key, uint defaultvalue)
+        {
+            if (!Configs.ContainsKey(key))
+            {
+                ConfigEntry cfg = new()
+                {
+                    Data = defaultvalue.ToString()
+                };
+                Configs.Add(key, cfg);
+                cfg.OriginLine = (Utility.GetLength(FilePath) + 1);
+                Utility.LineChange(FilePath, (Utility.GetLength(FilePath) + 1), Utility.LineBuilder(key, defaultvalue.ToString(), Seperator));
+            }
+            try
+            {
+                return Convert.ToUInt32(Configs[key].Data);
+            }
+            catch (Exception ex)
+            {
+                if (InternalConfig.ShowConversionWarnings)
+                {
+                    Log.WriteWarning("Error occured parsing value " + Configs[key].Data + "\n" + ex.ToString());
+                }
+                string datatoparse = Configs[key].Data;
+                if (uint.TryParse(datatoparse, out uint parsed))
+                {
+                    return parsed;
+                }
+                else
+                {
+                    return defaultvalue;
+                }
+            }
+        }
+        /// <summary>
+        /// Get a unsigned long from config
+        /// </summary>
+        /// <param name="key">
+        /// Key name
+        /// </param>
+        /// <param name="defaultvalue">
+        /// Default value to write if value not found
+        /// </param>
+        /// <returns>
+        /// ulong value of the key
+        /// </returns>
+        public ulong GetULong(string key, uint defaultvalue)
+        {
+            if (!Configs.ContainsKey(key))
+            {
+                ConfigEntry cfg = new()
+                {
+                    Data = defaultvalue.ToString()
+                };
+                Configs.Add(key, cfg);
+                cfg.OriginLine = (Utility.GetLength(FilePath) + 1);
+                Utility.LineChange(FilePath, (Utility.GetLength(FilePath) + 1), Utility.LineBuilder(key, defaultvalue.ToString(), Seperator));
+            }
+            try
+            {
+                return Convert.ToUInt64(Configs[key].Data);
+            }
+            catch (Exception ex)
+            {
+                if (InternalConfig.ShowConversionWarnings)
+                {
+                    Log.WriteWarning("Error occured parsing value " + Configs[key].Data + "\n" + ex.ToString());
+                }
+                string datatoparse = Configs[key].Data;
+                if (ulong.TryParse(datatoparse, out ulong parsed))
+                {
+                    return parsed;
+                }
+                else
+                {
+                    return defaultvalue;
+                }
+            }
+        }
+        /// <summary>
         /// Gets a value based on the input parameters
         /// </summary>
         /// <param name="key"></param>
@@ -551,9 +641,9 @@ namespace btelnyy.ConfigLoader.API
                 }
                 //neat trick to get around parsing bools
                 string datatoparse = Configs[key].Data;
-                if (bool.TryParse(datatoparse, out bool parsed))
+                if (int.TryParse(datatoparse, out int parsed))
                 {
-                    return Convert.ToInt32(parsed);
+                    return parsed;
                 }
                 else
                 {
@@ -592,9 +682,9 @@ namespace btelnyy.ConfigLoader.API
                     Log.WriteWarning("Error occured parsing value " + Configs[key].Data + "\n" + ex.ToString());
                 }
                 string datatoparse = Configs[key].Data;
-                if (int.TryParse(datatoparse, out int parsed))
+                if (bool.TryParse(datatoparse, out bool parsed))
                 {
-                    return Convert.ToBoolean(parsed);
+                    return parsed;
                 }
                 else
                 {
