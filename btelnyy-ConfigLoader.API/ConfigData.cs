@@ -692,6 +692,69 @@ namespace btelnyy.ConfigLoader.API
                 }
             }
         }
+        
+        public List<string> GetList(string key, List<string> defaultvalue)
+        {
+            if (!Configs.ContainsKey(key))
+            {
+                SetList(key, defaultvalue);
+                return defaultvalue;
+            }
+            else
+            {
+                return Utility.ListParse(Configs[key].Data);
+            }
+        }
+
+        public void SetList(string key, List<string> value)
+        {
+            if (Configs.ContainsKey(key))
+            {
+                Log.WriteWarning("Key already exists.");
+            }
+            else
+            {
+                ConfigEntry entry = new ConfigEntry
+                {
+                    Data = Utility.ListParse(value),
+                    OriginLine = Utility.GetLength(FilePath) + 1
+                };
+                Configs.Add(key, entry);
+                Utility.LineChange(FilePath, (Utility.GetLength(FilePath) + 1), Utility.LineBuilder(key, Utility.ListParse(value), Seperator));
+            }
+        }
+
+        public Dictionary<string, string> GetDict(string key, Dictionary<string, string> defaultvalue)
+        {
+            if (!Configs.ContainsKey(key))
+            {
+                SetDict(key, defaultvalue);
+                return defaultvalue;
+            }
+            else
+            {
+                return Utility.DictParse(Configs[key].Data);
+            }
+        }
+
+        public void SetDict(string key, Dictionary<string, string> value)
+        {
+            if (Configs.ContainsKey(key))
+            {
+                Log.WriteWarning("Key already exists.");
+            }
+            else
+            {
+                ConfigEntry entry = new ConfigEntry
+                {
+                    Data = Utility.DictParse(value),
+                    OriginLine = Utility.GetLength(FilePath) + 1
+                };
+                Configs.Add(key, entry);
+                Utility.LineChange(FilePath, (Utility.GetLength(FilePath) + 1), Utility.LineBuilder(key, Utility.DictParse(value), Seperator));
+            }
+        }
+
         #endregion
     }
 }

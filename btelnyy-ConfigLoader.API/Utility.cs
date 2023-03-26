@@ -46,5 +46,67 @@ namespace btelnyy.ConfigLoader.API
             str += "]";
             return str;
         }
+
+        public static List<string> ListParse(string str)
+        {
+            string[] strings = str.Split(",");
+            return strings.ToList();
+        }
+
+        public static string ListParse(List<string> list) 
+        {
+            string str = "";
+            foreach(string s in list)
+            {
+                if(list.Last() == s)
+                {
+                    str += s;
+                }
+                else
+                {
+                    str += s + ",";
+                }
+            }
+            return str;
+        }
+
+        public static string DictParse(Dictionary<string, string> dict)
+        {
+            string str = "";
+            List<string> pairs = new List<string>();
+            foreach(string s in dict.Keys)
+            {
+                string pair = s + "," + dict[s];
+                pairs.Add(pair);
+            }
+            foreach(string s in pairs)
+            {
+                if(pairs.Last() == s)
+                {
+                    str += s;
+                }
+                else
+                {
+                    str += s + "|";
+                }
+            }
+            return str;
+        }
+
+        public static Dictionary<string, string> DictParse(string str)
+        {
+            Dictionary<string, string> dict = new();
+            string[] pairs = str.Split("|");
+            foreach(string s in pairs)
+            {
+                string[] pair = s.Split(",");
+                if (dict.ContainsKey(pairs[0]))
+                {
+                    Log.WriteWarning("Dict duplicate detected.");
+                }
+                dict.Add(pair[0], pair[1]);
+            }
+            return dict;
+        }
     }
 }
