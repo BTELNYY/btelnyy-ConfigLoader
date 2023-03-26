@@ -184,6 +184,14 @@ namespace btelnyy.ConfigLoader.API
                     LineCounter++;
                     continue;
                 }
+                if(string.IsNullOrWhiteSpace(DataEntry) || string.IsNullOrEmpty(DataEntry)) 
+                {
+
+                    Log.WriteInfo("Blank entry on line " + LineCounter.ToString() + " ignored.");
+                    //make sure comments still count as a line, so they wont get overwritten
+                    LineCounter++;
+                    continue;
+                }
                 if (!DoNotCreateNewEntry)
                 {
                     Log.WriteInfo("Creating new entry! Line: " + LineCounter.ToString());
