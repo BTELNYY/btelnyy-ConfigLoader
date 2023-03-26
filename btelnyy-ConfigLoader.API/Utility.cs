@@ -76,7 +76,7 @@ namespace btelnyy.ConfigLoader.API
             List<string> pairs = new List<string>();
             foreach(string s in dict.Keys)
             {
-                string pair = s + "," + dict[s];
+                string pair = s + "|" + dict[s];
                 pairs.Add(pair);
             }
             foreach(string s in pairs)
@@ -87,7 +87,7 @@ namespace btelnyy.ConfigLoader.API
                 }
                 else
                 {
-                    str += s + "|";
+                    str += s + ",";
                 }
             }
             return str;
@@ -96,10 +96,10 @@ namespace btelnyy.ConfigLoader.API
         public static Dictionary<string, string> DictParse(string str)
         {
             Dictionary<string, string> dict = new();
-            string[] pairs = str.Split("|");
+            string[] pairs = str.Split(",");
             foreach(string s in pairs)
             {
-                string[] pair = s.Split(",");
+                string[] pair = s.Split("|");
                 if (dict.ContainsKey(pairs[0]))
                 {
                     Log.WriteWarning("Dict duplicate detected.");
