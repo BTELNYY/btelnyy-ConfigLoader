@@ -99,11 +99,14 @@ namespace btelnyy.ConfigLoader.API
             string[] pairs = str.Split(",");
             foreach(string s in pairs)
             {
+                Log.WriteDebug(s);
                 string[] pair = s.Split("|");
                 if (dict.ContainsKey(pairs[0]))
                 {
                     Log.WriteWarning("Dict duplicate detected.");
                 }
+                Log.WriteDebug(pair[0]);
+                Log.WriteDebug(pair[1]);
                 dict.Add(pair[0], pair[1]);
             }
             return dict;
