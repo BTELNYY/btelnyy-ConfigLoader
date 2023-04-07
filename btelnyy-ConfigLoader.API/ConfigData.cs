@@ -168,7 +168,7 @@ namespace btelnyy.ConfigLoader.API
             //read all text from the file
             string FileData = File.ReadAllText(Path);
             //split by newline
-            string[] Data = FileData.Split('\n');
+            string[] Data = FileData.Split(Environment.NewLine);
             ConfigEntry config = new();
             //for tags and such
             bool DoNotCreateNewEntry = false;
